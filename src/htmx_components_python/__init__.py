@@ -3,6 +3,27 @@ from __future__ import annotations
 import typing as t
 from abc import abstractstaticmethod
 from dataclasses import dataclass, field
+from enum import Enum
+
+
+@dataclass
+class TreeConfig:
+    data: t.Callable | list
+    lazy: bool = False
+    prefix: str = ""
+    key_attr: str = "id"
+    text_attr: str = "name"
+    parent_id_attr: str = "parent_id"
+    render_node: t.Callable[[t.Mapping], str] = lambda item: item["name"]
+    htmx_endpoint: str = ""
+    search: bool = True
+    toggle_all: bool = True
+    expand_icon: str = "bi-caret-right-fill text-secondary"
+    collapse_icon: str = "bi-caret-down-fill text-secondary"
+
+    def __post_init__(self):
+        if self.prefix and not self.prefix.endswith("-"):
+            self.prefix = f"{self.prefix}-"
 
 
 @dataclass
@@ -38,3 +59,9 @@ class GridConfig:
         q: str = "",
     ) -> tuple[t.Iterable[t.Any], int]:
         ...
+
+
+class SelectionMode(Enum):
+    NONE = 0
+    SINGLE = 1
+    MULTI = 2
